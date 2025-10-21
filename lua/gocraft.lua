@@ -2,7 +2,8 @@ require("server")
 
 monitor = peripheral.wrap("monitor_0")
 draverss = peripheral.wrap("extended_drawers:access_point_0")
-chest = peripheral.wrap("minecraft:chest_1")
+chestName = "minecraft:chest_1"
+chest = peripheral.wrap(chestName)
 turtle = peripheral.wrap("turtle_1")
 
 barnum = 0
@@ -137,7 +138,7 @@ function craftAll(craftladderr)
         num2 = num2 + 1
     end
     if #missingitemsFor ~= 0 then
-        dravers.pullItem("minecraft:chest_1")
+        dravers.pullItem(chestName)
         return missingitemsFor
     end
     
@@ -181,5 +182,5 @@ function craftAll(craftladderr)
             end
         end
     end
-    dravers.pullItem("minecraft:chest_1")
+    dravers.pullItem(chestName)
 end
