@@ -1,6 +1,4 @@
 dravers = peripheral.wrap("extended_drawers:access_point_0")
-cccggg = peripheral.wrap("extended_drawers:access_point_0")
--- chestffffffffff = peripheral.wrap("extended_drawers:access_point_0")
 require("server")
 require("gocraft")
 
@@ -73,7 +71,6 @@ function prepairCraft(craft, howMuch)
                         if d.name == ing.name then
                             local used = math.min(d.count, remainingItems)
                             d.count = d.count - used
-                            -- chestffffffffff.pushItem('minecraft:chest_1', d.name , used)
                             remainingItems = remainingItems - used
                             if remainingItems <= 0 then break end
                         end
@@ -131,9 +128,12 @@ function prepairCraft(craft, howMuch)
     end
 
     if #allneedsToCrafts == 0 then
-        craftAll(craftLadder)
-    else
-        print(textutils.serialiseJSON(allneedsToCrafts))
+        misitems = craftAll(craftLadder)
+        if misitems ~= nil then
+            if #misitems ~= 0 then
+                return misitems
+            end
+        end
     end
 
     return allneedsToCrafts
