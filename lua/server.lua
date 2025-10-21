@@ -1,30 +1,40 @@
+local dataDir = "/data"
+local dataFile = dataDir .. "/data.json"
+
+if not fs.exists(dataDir) then
+    fs.makeDir(dataDir)
+end
+
 function getData(where)
-    if fs.exists("data.json") then
-        file = fs.open("data.json", "r")
-        json = file.readAll()
+    if fs.exists(dataFile) then
+        local file = fs.open(dataFile, "r")
+        local json = file.readAll()
         file.close()
-        data = textutils.unserialiseJSON(json)
-        filtered = {}
+
+        local data = textutils.unserialiseJSON(json)
+        if not data then return {} end
+
         if where then
+            local filtered = {}
             for _, item in pairs(data) do
-                if item.where[1] == where[2] then
+                if item.where and item.where[1] == where[2] then
                     table.insert(filtered, item)
                 end
             end
             return filtered
         end
+
         return data
+    else
+        return {}
     end
 end
 
 function wrigthData(json)
-    data = getData()
-    all={}
-    local file = fs.open("data.json", "w")
-    if data then
-        all=data
-    end
-    table.insert(all, json)
-    file.write(textutils.serialiseJSON(all))
+    local data = getData() or {}
+
+    table.insert(data, json)
+    local file = fs.open(dataFile, "w")
+    file.write(textutils.serialiseJSON(data))
     file.close()
 end
