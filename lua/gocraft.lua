@@ -7,7 +7,7 @@ turtle = peripheral.wrap("turtle_1")
 
 barnum = 0
 tur = { 1, 2, 3, 5, 6, 7, 9, 10, 11 }
-turtleId = 1
+turtleId = 2
 
 local function gripCraft2(craft)
     local filtered = {}
@@ -101,22 +101,33 @@ function craftAll(craftladderr)
     filtered = compressCraftLadder(craftladderr)
     filtered = splitCraftBatches(filtered)
 
-    -- print(textutils.serialiseJSON(filtered))
-
     num = 0
     num2 = 0
+    missingitemsFor={}
     for key, value in pairs(filtered) do
         for _, value1 in pairs(value) do
-            
             crrr = true
             for _, crvalue in pairs(allCrafts) do
                 if crrr then
                     if value1.name == crvalue.name then
-                        print(crvalue.name)
-                        crrr=false
+                        crrr = false
+
                         for _, ff in pairs(gripCraft2(crvalue.craft)) do
-                            print('ff.name')
-                            draverss.pushItem('minecraft:chest_1', ff.name , ff.count*value1.count)
+                            goof = true
+                            dravItems = draverss.items()
+                            goofcount = 0
+                            for _, draritremvalue in pairs(dravItems) do
+                                if draritremvalue.name == ff.name then
+                                    goofcount = draritremvalue.count
+                                    if draritremvalue.count >= ff.count * value1.count then
+                                        goof = false
+                                        draverss.pushItem('minecraft:chest_1', ff.name, ff.count * value1.count)
+                                    end
+                                    if goof then
+                                        table.insert(missingitemsFor, {name=ff.name, count=ff.count * value1.count - goofcount})
+                                    end
+                                end
+                            end
                         end
                     end
                 end
@@ -125,26 +136,27 @@ function craftAll(craftladderr)
         end
         num2 = num2 + 1
     end
+    if #missingitemsFor ~= 0 then
+        dravers.pullItem("minecraft:chest_1")
+        return missingitemsFor
+    end
+    
 
     items = chest.list()
-    gripbar = math.ceil(30/num)
-    -- print("g2gh")
+    gripbar = math.ceil(30 / num)
+
     for i = num2, 1, -1 do
-        -- sleep(1)
-        -- print("gg", textutils.serialiseJSON(filtered['on' .. i]))
         for _, value in pairs(filtered['on' .. i]) do
             local crafttttt = true
             local countCraf = 0
             for _, craftvalue in pairs(allCrafts) do
                 if crafttttt and craftvalue.name == value.name then
-                    -- print("g2g", craftvalue.name)
                     for crkey, crvalue in pairs(craftvalue.craft) do
                         if crvalue ~= '' then
                             crafttttt = false
                             countCraf = value.count
                             for slot, item in pairs(items) do
                                 if item.name == crvalue then
-                                    -- sleep(0.2)
                                     items = chest.list()
                                     chest.pushItems('turtle_1', slot, value.count, tur[crkey])
                                 end
@@ -153,8 +165,6 @@ function craftAll(craftladderr)
                     end
                 end
             end
-            -- print(countCraf)
-            -- sleep(1)
             if i == 1 then
                 rednet.send(turtleId, "goCraft:" .. countCraf .. ":main")
             else
@@ -171,6 +181,5 @@ function craftAll(craftladderr)
             end
         end
     end
-    -- print(111111111)
     dravers.pullItem("minecraft:chest_1")
 end
