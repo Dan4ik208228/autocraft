@@ -113,7 +113,6 @@ function settings(settingsData)
     drawButtons(btnPrepair)
     dTrick, darg = settingsData.name:match("([^:]+):?(.*)")
 
-    -- ex=50-#settingsData.name
     monitor.setCursorPos(math.floor((50 - #darg - 7) / 2), 2)
     monitor.setBackgroundColor(colors.blue)
     monitor.write('CRAFT: ' .. darg)
@@ -272,6 +271,11 @@ function Click(key, value)
             if tonumber(craftCount) >= 1 then
                 mainNeed = prepairCraft(craftSettings, math.ceil(tonumber(craftCount) / craftSettings.count))
                 if #mainNeed > 0 then
+                    for i = 1, 9 do
+                        monitor.setBackgroundColor(colors.black)
+                        monitor.setCursorPos(1, 9 + i)
+                        monitor.write('                                                                               ')
+                    end
                     for key, value in pairs(mainNeed) do
                         monitor.setBackgroundColor(colors.black)
                         monitor.setCursorPos(1, 9 + key)
@@ -307,7 +311,6 @@ while true do
                 CurrentButtonClick = 'CraftSettings'
                 settings(listData['on' .. page][y - 2])
 
-                -- print(textutils.serialiseJSON(listData['on' .. page][y - 2]))
             end
         end
         if CurrentButtonClick == 'Mods' then
